@@ -25,15 +25,54 @@ def ajuda(stdscr):
     stdscr.addstr(5, 1, "Pressione espaço para sair dessa tela.")
     stdscr.refresh()
 
-def reiniciar_tela(stdscr):
-    stdscr.clear()
+def limites(pos_x, pos_y):
+    if pos_x > 2:
+        pos_x = 0
+    if pos_x < 0:
+        pos_x = 2
+    if pos_y > 2:
+        pos_y = 0
+    if pos_y < 0:
+        pos_y = 2
+    return pos_x, pos_y
+
+def espaco_do_tabuleiro(pos_x, pos_y, entrada):
+    if entrada == 'a':
+        pos_x, pos_y = limites(pos_x - 1, pos_y)
+    elif entrada == 'd':
+        pos_x, pos_y = limites(pos_x + 1, pos_y)
+    elif entrada == 's':
+        pos_x, pos_y = limites(pos_x, pos_y + 1)
+    elif entrada == 'w':
+        pos_x, pos_y = limites(pos_x, pos_y - 1)
+    else:
+        pass
+    return pos_x, pos_y
+
+def reiniciar_tela(stdscr, limpar=True):
+    if limpar is True:
+        stdscr.clear()
     stdscr.border()
     boas_vindas(stdscr)
     stdscr.refresh()
 
+def tabuleiro(stdscr, posicoes, x_center):
+    stdscr.clear()
+    reiniciar_tela(stdscr, limpar=False)
+
+    stdscr.addstr(10, x_center - 3, "------")
+    stdscr.addstr(12, x_center - 3, "------")
+    i = 9
+    for linha in posicoes:
+        tela = "%s|%s|%s " % tuple(linha)
+        stdscr.addstr(i, x_center - 3, tela)
+        i += 2
 
 def main(stdscr):
     reiniciar_tela(stdscr)
+    width = stdscr.getmaxyx()[1]
+    x_center = (width - 1) // 2
+    posicoes = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
 
     while True:
         entrada = stdscr.getkey()
@@ -42,7 +81,7 @@ def main(stdscr):
         if entrada == 'h':
             ajuda(stdscr)
         else:
-            boas_vindas(stdscr)
+            tabuleiro(stdscr, posicoes, x_center)
 
 
 if __name__ == "__main__":
